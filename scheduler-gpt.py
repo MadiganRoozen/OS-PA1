@@ -1,5 +1,7 @@
 import argparse
 
+#human written code
+
 #set up parser to get input file name
 parser = argparse.ArgumentParser()
 parser.add_argument('filename', type=str)
@@ -44,18 +46,16 @@ try:
 except FileNotFoundError:
   print(args.filename + " not found")
 
-#print to check if we got everything
-print(str(processCount))
-print(str(totalTime))
-print(scheduler)
-print(str(quantum))
-for p in processes:
-  print(p['name'] + " " + str(p['arrival']) + " " + str(p['burst']))
+print(str(processCount) + " processes")
+#end of human written code 
+
 
 #begin chatgpt code
+#all comments are human written, chatgpt did not produce any comments after enough prompting
 from collections import deque
 
 def first_come_first_serve(processes, totalTime):
+    #sorts by arrival time
     processes.sort(key=lambda x: x['arrival'])
     current_time = 0
     wait_times = {}
@@ -68,7 +68,8 @@ def first_come_first_serve(processes, totalTime):
         while current_time < arrival:
             print(f"Time {current_time}: idle")
             current_time += 1
-        print(f"Time {current_time}: Process {process['name']} selected")
+        print("Time " + str(current_time) + ": Process " + process['name'] + " arrived") #human written line
+        print(f"Time {current_time}: Process {process['name']} selected (burst  {process['burst']})") #human altered line, added (burst ) to print
         response_times[process['name']] = current_time - arrival
         wait_times[process['name']] = current_time - arrival
         current_time += burst
@@ -98,8 +99,7 @@ def shortest_job_first_preemptive(processes, totalTime):
     completed = set()
     
     #while we still have processes to finish and time to kill
-    #this should be an AND not an OR
-    while len(completed) < len(processes) and current_time < totalTime:
+    while len(completed) < len(processes) or current_time < totalTime:
         #mark available if the arrival time is already passed and if the process is not complete
         available = [p for p in processes if p['arrival'] <= current_time and p['name'] not in completed]
         #sort available list by remainig time to find the shortest to completion
@@ -108,10 +108,16 @@ def shortest_job_first_preemptive(processes, totalTime):
         #choose the first available process
         if available:
             current_process = available[0]
+
+            #human written lines to add in arrival time
+            if(current_time == current_process['arrival']):
+                print("Time " + str(current_time) + ": Process " + current_process['name'] + " arrived")
+            #end of human written lines
+
             #add the process to the list of response times for metrics later
             if current_process['name'] not in response_times:
                 response_times[current_process['name']] = current_time - current_process['arrival']
-            print(f"Time {current_time}: Process {current_process['name']} selected") #prints "selected" for every time stamp
+            print(f"Time {current_time}: Process {current_process['name']} selected (burst {remaining_time[current_process['name']]})") #prints "selected" for every time stamp human altered to include burst
             #sets the remaining time of that process to its value minus one
             remaining_time[current_process['name']] -= 1
             #if the process has finished, add it to the completed list, find the turnaround time, find the wait time, and print that the process has finished
@@ -149,11 +155,11 @@ def round_robin(processes, totalTime, quantum):
     in_queue = set()
     
     #this should be an AND not an OR for the totalTime check
-    while (remaining_processes or ready_queue) and current_time < totalTime:
+    while (remaining_processes or ready_queue) or current_time < totalTime:
         #adds processes that arrive at the current time to the ready queue
         while remaining_processes and remaining_processes[0]['arrival'] == current_time:
             process = remaining_processes.pop(0)
-            print(f"Time {current_time}: Process {process['name']} arrives")
+            print(f"Time {current_time}: Process {process['name']} arrived") #human altered to say "arrived"
             ready_queue.append(process['name'])
             in_queue.add(process['name'])
         #if there is stuff in the queue, select the first one to be run 
@@ -166,7 +172,7 @@ def round_robin(processes, totalTime, quantum):
                 response_times[current_process] = current_time - next(p['arrival'] for p in processes if p['name'] == current_process)
             
             #run process for the quantum time or until it is done
-            print(f"Time {current_time}: Process {current_process} selected")
+            print(f"Time {current_time}: Process {current_process} selected (burst {remaining_burst[current_process]})") #human altered to include burst
             execution_time = min(quantum, remaining_burst[current_process])
             remaining_burst[current_process] -= execution_time
             current_time += execution_time
@@ -201,10 +207,14 @@ def round_robin(processes, totalTime, quantum):
 
 # Decide which function to run based on the scheduler type
 if scheduler == "fcfs":
+    print("Using First Come First Serve")#human written line
     first_come_first_serve(processes, totalTime)
 elif scheduler == "sjf":
+    print("Using preemptive Shortest Job First")#human written line
     shortest_job_first_preemptive(processes, totalTime)
 elif scheduler == "rr":
+    print("Using Round Robin")#human written line
+    print("Quantum " + str(quantum)) #human written line
     round_robin(processes, totalTime, quantum)
 else:
     print("Invalid scheduler type.")

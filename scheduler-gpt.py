@@ -1,5 +1,11 @@
 import argparse
 
+#COP 4600 - Group 12
+#Madigan Roozen
+#Evans Bakire
+#Joseph D'Agati
+#Zoe Schlesinger
+
 #human written code
 
 #set up parser to get input file name

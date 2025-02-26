@@ -16,3 +16,22 @@ Finished at time  20
 
 P1 wait   0 turnaround   5 response   0
 P2 wait   0 turnaround   9 response   0
+2 processes
+Using First Come First Serve
+Time 0: Process P1 arrived
+Time 0: Process P1 selected (burst  5)
+Time 5: Process P1 finished
+Time 5: idle
+Time 6: idle
+Time 7: Process P2 arrived
+Time 7: Process P2 selected (burst  9)
+Time 16: Process P2 finished
+Time 16: idle
+Time 17: idle
+Time 18: idle
+Time 19: idle
+Finished at time 20
+
+Final Results:
+Process P1: Wait Time = 0, Turnaround Time = 5, Response Time = 0
+Process P2: Wait Time = 0, Turnaround Time = 9, Response Time = 0
